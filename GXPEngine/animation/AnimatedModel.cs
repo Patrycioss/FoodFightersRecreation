@@ -5,6 +5,8 @@ namespace GXPEngine.animation;
 
 public class AnimatedModel : GameObject
 {
+    public string ActiveAnimation { get; private set; }
+    
     private readonly AnimationSprite _animationSprite;
     private readonly Dictionary<string, Animation> _animations;
 
@@ -31,8 +33,10 @@ public class AnimatedModel : GameObject
                 animation.StartFrame,
                 animation.FrameCount,
                 animation.AnimationDelay,
-                true
+                switchFrame: true
             );
+
+            ActiveAnimation = key;
         }
         else Debug.Fail($"Animation with key: {key} does not exist!");
     }

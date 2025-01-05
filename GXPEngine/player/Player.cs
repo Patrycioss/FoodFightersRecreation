@@ -1,30 +1,83 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace GXPEngine.player;
 
 public sealed class Player : GameObject
 {
-    private PlayerKeyMap _playerKeyMap;
+    private readonly PlayerKeyMap _playerKeyMap;
     private Character _character;
+    private bool _hasActiveCharacter;
+    private bool _moving;
+    private int _selectedCharacterIndex = -1;
 
-    private bool _moving = false;
-    private bool _mirrored = false;
+    private readonly Character[] _characters =
+    [
+        new PastaMan(),
+        new BurgerWoman(),
+    ];
 
-    public Player(PlayerKeyMap playerKeyMap, Character startCharacter)
+    public Player(PlayerKeyMap playerKeyMap)
     {
         _playerKeyMap = playerKeyMap;
-        _character = startCharacter;
+        NextCharacter();
+    }
+
+    protected override void OnMirror(bool mirror, int offset)
+    {
+        _character.Mirror(mirror, offset);
+    }
+
+    private void NextCharacter()
+    {
+        string activeAnimation = "";
+        
+        if (_hasActiveCharacter)
+        {
+            activeAnimation = _character.Model.ActiveAnimation;
+            _character.parent = null;
+        }
+        
+        _selectedCharacterIndex++; 
+        if (_selectedCharacterIndex >= _characters.Length) _selectedCharacterIndex = 0;
+
+        _character = _characters[_selectedCharacterIndex];
+        _character.Mirror(Mirrored);
+        _character.Model.StartAnimation(_hasActiveCharacter? activeAnimation : "Idle");
         AddChild(_character);
+        _hasActiveCharacter = true;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(Key.R))
+        if (Input.GetKeyDown(_playerKeyMap.Swap))
         {
+            NextCharacter();
+            return;
+        }
+        
+        Vector2 direction = GetDirection();
+
+        if (direction.X < 0 || direction.X > 0 || direction.Y < 0 || direction.Y > 0)
+        {
+            if (!_moving)
+            {
+                _character.Model.StartAnimation("Walking");
+            }
+
+            Mirror(direction.X < 0);
+
+            _moving = true;
+            SetXY(x + direction.X, y + direction.Y);
+        }
+        else if (_moving)
+        {
+            _moving = false;
             _character.Model.StartAnimation("Idle");
         }
+    }
 
+    private Vector2 GetDirection()
+    {
         Vector2 direction = Vector2.Zero;
 
         if (Input.GetKey(_playerKeyMap.Right))
@@ -42,29 +95,11 @@ public sealed class Player : GameObject
             direction.Y += 1;
         }
 
-        if (direction.X < 0 || direction.X > 0 || direction.Y < 0 || direction.Y > 0)
+        if (Input.GetKey(_playerKeyMap.Up))
         {
-            if (!_moving)
-            {
-                _character.Model.StartAnimation("Walking");
-            }
-            
-            Mirror(direction.X < 0);
-
-            _moving = true;
-            this.SetPosition(this.GetPosition() + direction);
-            Console.WriteLine("yep " + this.GetPosition());
+            direction.Y -= 1;
         }
-        else if (_moving)
-        {
-            _moving = false;
-            _character.Model.StartAnimation("Idle");
-        }
-    }
 
-    protected override void OnMirror(bool mirror, int offset)
-    {
-        _character.Mirror(mirror, offset);
-        _mirrored = mirror;    
+        return direction;
     }
 }

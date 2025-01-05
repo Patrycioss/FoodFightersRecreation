@@ -18,14 +18,13 @@ namespace GXPEngine
         public bool visible = true;
         private bool destroyed = false;
 
-        public bool Mirrored => _mirrored;
-        private bool _mirrored = false;
+        public bool Mirrored { get; private set; }
 
         public void Mirror(bool mirror, int mirrorOffset = 0)
         {
-            if (_mirrored == mirror) return;
-            _mirrored = mirror;
-            OnMirror(_mirrored, mirrorOffset);
+            if (Mirrored == mirror) return;
+            Mirrored = mirror;
+            OnMirror(Mirrored, mirrorOffset);
         }
 
         protected virtual void OnMirror(bool mirror, int offset)

@@ -4,11 +4,11 @@ namespace GXPEngine;
 
 public sealed class MyGame : Game
 {
-    private Player _player;
+    private readonly Player _player;
 
     public MyGame() : base(1360, 760, false)
     {
-        _player = new Player(PlayerKeyMap.Player1Preset(), new PastaMan());
+        _player = new Player(PlayerKeyMap.Player1Preset());
         AddChild(_player);
     }
 
