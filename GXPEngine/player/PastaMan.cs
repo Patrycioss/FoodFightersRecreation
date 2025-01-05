@@ -17,4 +17,9 @@ public sealed class PastaMan : Character
         Model.AddAnimation("Special", new Animation(41, 4, 100));
         Model.StartAnimation("Idle");
     }
+
+    protected override void OnMirror(bool mirror, int offset)
+    {
+        Model.Mirror(mirror, offset + 256);
+    }
 }

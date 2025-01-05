@@ -2,7 +2,7 @@
 
 namespace GXPEngine.player;
 
-public abstract class Character
+public abstract class Character : GameObject
 {
     public readonly Sprite Hitbox;
     public readonly AnimatedModel Model;
@@ -13,16 +13,15 @@ public abstract class Character
         {
             visible = false,
         };
+        AddChild(Hitbox);
 
         Model = new AnimatedModel(animationSpriteInfo);
+        AddChild(Model);
     }
 
-    public void Link(GameObject parent)
-    {
-        Hitbox.SetPosition(parent.GetPosition());
-        parent.AddChild(Hitbox);
 
-        Model.SetPosition(parent.GetPosition());
-        parent.AddChild(Model);
+    protected override void OnMirror(bool mirror, int offset)
+    {
+        Model.Mirror(mirror, offset);
     }
 }

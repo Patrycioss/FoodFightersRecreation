@@ -14,13 +14,13 @@ public class AnimatedModel : GameObject
         _animationSprite = animationSpriteInfo.ToAnimationSprite(addCollider);
         AddChild(_animationSprite);
     }
-    
+
     public void AddAnimation(string key, Animation animation)
     {
         if (!_animations.TryAdd(key, animation))
         {
             Debug.Fail($"Animation with {key} has already been added");
-        };
+        }
     }
 
     public void StartAnimation(string key)
@@ -35,6 +35,20 @@ public class AnimatedModel : GameObject
             );
         }
         else Debug.Fail($"Animation with key: {key} does not exist!");
+    }
+
+    protected override void OnMirror(bool mirror, int offset)
+    {
+        if (mirror)
+        {
+            x -= offset;
+        }
+        else
+        {
+            x += offset;
+        }
+
+        _animationSprite.Mirror(mirror, false);
     }
 
     private void Update()

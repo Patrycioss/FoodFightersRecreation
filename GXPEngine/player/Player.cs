@@ -9,13 +9,13 @@ public sealed class Player : GameObject
     private Character _character;
 
     private bool _moving = false;
+    private bool _mirrored = false;
 
     public Player(PlayerKeyMap playerKeyMap, Character startCharacter)
     {
         _playerKeyMap = playerKeyMap;
         _character = startCharacter;
-
-        _character.Link(this);
+        AddChild(_character);
     }
 
     private void Update()
@@ -48,6 +48,8 @@ public sealed class Player : GameObject
             {
                 _character.Model.StartAnimation("Walking");
             }
+            
+            Mirror(direction.X < 0);
 
             _moving = true;
             this.SetPosition(this.GetPosition() + direction);
@@ -58,5 +60,11 @@ public sealed class Player : GameObject
             _moving = false;
             _character.Model.StartAnimation("Idle");
         }
+    }
+
+    protected override void OnMirror(bool mirror, int offset)
+    {
+        _character.Mirror(mirror, offset);
+        _mirrored = mirror;    
     }
 }
