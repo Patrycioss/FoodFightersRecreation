@@ -3,12 +3,12 @@ using System.Numerics;
 
 namespace GXPEngine.player;
 
-public class Player : GameObject
+public sealed class Player : GameObject
 {
-    private IPlayerKeyMap _playerKeyMap;
+    private PlayerKeyMap _playerKeyMap;
     private Character _character;
 
-    public Player(IPlayerKeyMap playerKeyMap, Character startCharacter)
+    public Player(PlayerKeyMap playerKeyMap, Character startCharacter)
     {
         _playerKeyMap = playerKeyMap;
         _character = startCharacter;
@@ -16,7 +16,7 @@ public class Player : GameObject
         _character.Link(this);
     }
 
-    protected virtual void Update()
+    private void Update()
     {
         _character.Model.Animate(Time.deltaTime);
         
