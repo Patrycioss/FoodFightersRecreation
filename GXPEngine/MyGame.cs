@@ -14,6 +14,7 @@ public sealed class MyGame : Game
 
     private void Update()
     {
+       
     }
 
     private static void Main()

@@ -1,27 +1,27 @@
-﻿using System;
+﻿using GXPEngine.animation;
 
 namespace GXPEngine.player;
 
-public class Character
+public abstract class Character
 {
     public readonly Sprite Hitbox;
-    public readonly AnimationSprite Model;
+    public readonly AnimatedModel Model;
 
-    protected Character(string hitboxPath, AnimationSettings animationSettings)
+    protected Character(string hitboxPath, AnimationSpriteInfo animationSpriteInfo)
     {
         Hitbox = new Sprite(hitboxPath)
         {
             visible = false,
         };
-        Model = animationSettings.ToAnimationSprite(false);
-        Model.SetCycle(0, 25, 40);
+
+        Model = new AnimatedModel(animationSpriteInfo);
     }
 
     public void Link(GameObject parent)
     {
         Hitbox.SetPosition(parent.GetPosition());
         parent.AddChild(Hitbox);
-        
+
         Model.SetPosition(parent.GetPosition());
         parent.AddChild(Model);
     }
